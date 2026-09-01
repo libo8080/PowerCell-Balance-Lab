@@ -1,0 +1,58 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import { BatteryCharging, Calculator, Gauge, Info, Medal, RotateCcw, Zap } from 'lucide-react';
+import { CartesianGrid, Cell, Label, ReferenceLine, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from 'recharts';
+import { Slider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+const products = [
+  { brand: '品胜', model: '1号', energy: 203.9, power: 255.9 }, { brand: '绿联', model: '能量排 mini', energy: 235.7, power: 163.7 },
+  { brand: '喜来松', model: '10号 mini', energy: 239.4, power: 232.8 }, { brand: '舒杨', model: '281', energy: 324.2, power: 140.3 },
+  { brand: '振华G', model: 'ZHP45B', energy: 360.6, power: 542.5 }, { brand: '振华兄', model: 'ZHP2C', energy: 266.1, power: 615.9 },
+  { brand: '振华兄', model: 'ZHP2D', energy: 218.1, power: 757.1 }, { brand: '凌霄科技', model: 'L7', energy: 231.7, power: 429.1 },
+  { brand: 'YZStudio', model: '锋12', energy: 313.0, power: 156.5 }, { brand: 'YZStudio', model: '锋16', energy: 349.5, power: 525.9 },
+  { brand: '极创工坊', model: 'JC10mini', energy: 300.5, power: 313.0 }, { brand: 'YZStudio', model: '锋14', energy: 271.6, power: 276.6 },
+  { brand: '极创工坊', model: 'JC15', energy: 321.9, power: 322.9 }, { brand: '立花', model: '3号Ultra', energy: 331.0, power: 284.0 },
+  { brand: '怡路', model: 'YL200', energy: 331.8, power: 298.0 },
+];
+
+const score = (p: (typeof products)[number], w: number) => 1 / (w / p.power + (1 - w) / p.energy);
+const presets = [{ label: '续航优先', value: 20 }, { label: '均衡推荐', value: 50 }, { label: '快充优先', value: 80 }];
+const chartConfig = { product: { label: '产品', color: '#187c64' } };
+
+export default function Home() {
+  const [weight, setWeight] = useState(50);
+  const ranked = useMemo(() => [...products].map((p) => ({ ...p, name: `${p.brand} ${p.model}`, score: score(p, weight / 100) })).sort((a, b) => b.score - a.score), [weight]);
+  const average = ranked.reduce((sum, p) => sum + p.score, 0) / ranked.length;
+  const intent = weight > 60 ? '快充导向' : weight < 40 ? '续航导向' : '均衡导向';
+
+  return (
+    <main className="min-h-screen bg-[#f4f4ed] text-[#17231f]"><div className="mx-auto max-w-[1440px] px-4 py-5 sm:px-8 lg:px-12 lg:py-8">
+      <header className="mb-6 flex flex-col justify-between gap-4 border-b border-[#17231f]/15 pb-5 sm:flex-row sm:items-end"><div><div className="mb-2 flex items-center gap-2 text-xs font-bold tracking-[.16em] text-[#187c64] uppercase"><BatteryCharging className="size-4" />移动电源决策实验室</div><h1 className="text-3xl font-semibold tracking-[-.04em] sm:text-4xl">功率 × 能量密度权衡器</h1></div><p className="max-w-md text-sm leading-6 text-[#53615c]">改变你对快充与续航的重视程度，立即找到更符合使用场景的产品。</p></header>
+
+      <section className="grid gap-5 lg:grid-cols-[380px_1fr]">
+        <aside className="rounded-[24px] bg-[#173f35] p-6 text-white shadow-[0_18px_45px_rgba(20,56,47,.16)]"><div className="flex items-start justify-between"><div><p className="text-xs font-semibold tracking-[.14em] text-[#9dd6c5] uppercase">权重控制</p><h2 className="mt-2 text-xl font-semibold">你更在意什么？</h2></div><Gauge className="size-7 text-[#f7b64a]" /></div>
+          <div className="mt-8"><div className="mb-4 flex items-end justify-between"><span className="text-sm text-[#c7ddd6]">功率密度权重 w</span><strong className="text-4xl tabular-nums text-[#f7b64a]">{weight}%</strong></div><Slider aria-label="功率密度权重" value={[weight]} min={0} max={100} step={1} onValueChange={(v) => setWeight(v[0])} className="[&_[data-slot=slider-range]]:bg-[#f7b64a] [&_[data-slot=slider-thumb]]:size-5 [&_[data-slot=slider-thumb]]:border-[#f7b64a]" /><div className="mt-3 flex justify-between text-xs text-[#9dbab1]"><span>偏重能量</span><span>平衡</span><span>偏重功率</span></div></div>
+          <div className="mt-7 grid grid-cols-3 gap-2">{presets.map((p) => <button key={p.value} onClick={() => setWeight(p.value)} className={`rounded-xl border px-2 py-2.5 text-xs transition ${weight === p.value ? 'border-[#f7b64a] bg-[#f7b64a] font-bold text-[#173f35]' : 'border-white/15 bg-white/[.05] text-[#c7ddd6] hover:bg-white/10'}`}>{p.label}</button>)}</div>
+          <div className="mt-7 rounded-2xl border border-white/10 bg-white/[.06] p-4 font-mono text-[13px] leading-7 text-[#dbe9e4]">S = 1 / ( w / P<sub>d</sub> + (1−w) / E<sub>d</sub> )</div><p className="mt-3 text-xs leading-5 text-[#9dbab1]">P<sub>d</sub>：充电功率密度（W/L）<br />E<sub>d</sub>：体积能量密度（Wh/L）</p>
+        </aside>
+
+        <div className="rounded-[24px] border border-[#17231f]/10 bg-[#fffef9] p-5 sm:p-6"><div className="mb-5 flex items-start justify-between"><div><p className="text-xs font-bold tracking-[.14em] text-[#77837e] uppercase">即时推荐 · {intent}</p><h2 className="mt-1 text-2xl font-semibold">当前前三名</h2></div><Zap className="size-6 text-[#e69c24]" /></div><div className="grid gap-3 md:grid-cols-3">{ranked.slice(0, 3).map((item, i) => <article key={item.name} className={`rounded-2xl border p-5 ${i === 0 ? 'border-[#e4a43c] bg-[#fff5dd]' : 'border-[#17231f]/10 bg-white'}`}><div className="flex items-center justify-between"><span className="flex items-center gap-1 text-xs font-bold text-[#187c64]">{i === 0 && <Medal className="size-4 text-[#d98e18]" />}NO.{i + 1}</span><span className="font-mono text-xl font-bold">{item.score.toFixed(1)}</span></div><h3 className="mt-5 text-lg font-semibold">{item.brand}</h3><p className="mt-1 text-sm text-[#6b7772]">{item.model}</p><div className="mt-5 grid grid-cols-2 gap-2 text-xs text-[#53615c]"><span>能量 {item.energy}</span><span>功率 {item.power}</span></div></article>)}</div>
+          <div className="mt-5 grid grid-cols-3 gap-3 border-t border-[#17231f]/10 pt-5 text-center"><div><div className="font-mono text-xl font-bold">{ranked[0].score.toFixed(1)}</div><div className="mt-1 text-xs text-[#77837e]">最高综合分</div></div><div><div className="font-mono text-xl font-bold">{average.toFixed(1)}</div><div className="mt-1 text-xs text-[#77837e]">平均综合分</div></div><div><div className="font-mono text-xl font-bold">{products.length}</div><div className="mt-1 text-xs text-[#77837e]">对比产品</div></div></div>
+        </div>
+      </section>
+
+      <section className="mt-5 grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
+        <div className="rounded-[24px] border border-[#17231f]/10 bg-[#fffef9] p-5 sm:p-6"><div className="mb-2 flex items-center justify-between"><div><p className="text-xs font-bold tracking-[.14em] text-[#77837e] uppercase">密度地图</p><h2 className="mt-1 text-xl font-semibold">谁更接近右上角？</h2></div><span className="rounded-full bg-[#e6f0eb] px-3 py-1 text-xs font-bold text-[#187c64]">越靠右上越强</span></div><ChartContainer config={chartConfig} className="mt-4 h-[360px] w-full aspect-auto"><ScatterChart margin={{ top: 15, right: 15, bottom: 25, left: 5 }}><CartesianGrid strokeDasharray="4 5" vertical={false} /><XAxis type="number" dataKey="energy" domain={[180, 380]} tickLine={false} axisLine={false}><Label value="能量密度 Wh/L" position="bottom" offset={4} /></XAxis><YAxis type="number" dataKey="power" domain={[100, 800]} tickLine={false} axisLine={false} width={42}><Label value="功率密度 W/L" angle={-90} position="insideLeft" offset={10} /></YAxis><ZAxis range={[70, 70]} /><ReferenceLine x={300} stroke="#9aa59f" strokeDasharray="3 4" /><ReferenceLine y={300} stroke="#9aa59f" strokeDasharray="3 4" /><ChartTooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent labelKey="name" formatter={(value, name) => <><span className="text-muted-foreground">{name === 'energy' ? '能量密度' : '功率密度'}</span><span className="ml-auto font-mono font-semibold">{String(value)}</span></>} />} /><Scatter data={ranked} name="product"><Cell fill="#e7a334" />{ranked.slice(1).map((p) => <Cell key={p.name} fill="#187c64" fillOpacity={0.78} />)}</Scatter></ScatterChart></ChartContainer></div>
+
+        <div className="overflow-hidden rounded-[24px] border border-[#17231f]/10 bg-[#fffef9]"><div className="flex items-center justify-between p-5 pb-3 sm:p-6 sm:pb-3"><div><p className="text-xs font-bold tracking-[.14em] text-[#77837e] uppercase">完整排名</p><h2 className="mt-1 text-xl font-semibold">15 款产品实时排序</h2></div><Button variant="ghost" size="sm" onClick={() => setWeight(50)} className="text-[#53615c]"><RotateCcw className="size-4" />重置</Button></div><div className="max-h-[395px] overflow-auto"><Table><TableHeader className="sticky top-0 z-10 bg-[#f2f2eb]"><TableRow><TableHead className="pl-6">排名</TableHead><TableHead>产品</TableHead><TableHead className="text-right">能量</TableHead><TableHead className="text-right">功率</TableHead><TableHead className="pr-6 text-right">综合分</TableHead></TableRow></TableHeader><TableBody>{ranked.map((p, i) => <TableRow key={p.name} className={i < 3 ? 'bg-[#fff8e9]' : ''}><TableCell className="pl-6 font-mono font-bold text-[#187c64]">{String(i + 1).padStart(2, '0')}</TableCell><TableCell><div className="font-medium">{p.brand}</div><div className="text-xs text-[#7a8580]">{p.model}</div></TableCell><TableCell className="text-right font-mono">{p.energy.toFixed(1)}</TableCell><TableCell className="text-right font-mono">{p.power.toFixed(1)}</TableCell><TableCell className="pr-6 text-right font-mono font-bold">{p.score.toFixed(1)}</TableCell></TableRow>)}</TableBody></Table></div></div>
+      </section>
+
+      <section className="mt-5 grid gap-4 rounded-[24px] border border-[#17231f]/10 bg-[#e7ebe3] p-5 sm:grid-cols-[auto_1fr] sm:p-6"><div className="flex size-10 items-center justify-center rounded-full bg-[#173f35] text-white"><Calculator className="size-5" /></div><div><h2 className="font-semibold">如何理解这个结果</h2><p className="mt-2 max-w-5xl text-sm leading-6 text-[#59665f]">加权调和平均会对“偏科”产品施加更强惩罚：某一项很高、另一项很低时，综合分会被短板拉低。w = 0.5 表示两项等权；w 越大，功率密度越重要。由于 W/L 与 Wh/L 的量纲不同，综合分适合做本表内部的相对排序，不宜作为跨数据集的绝对性能指标。</p><div className="mt-3 flex items-start gap-2 text-xs leading-5 text-[#6c7771]"><Info className="mt-0.5 size-4 shrink-0" />数据按用户提供的截图人工整理；受图片分辨率影响，个别品牌或型号文字可能存在识别误差。</div></div></section>
+      <footer className="flex flex-col justify-between gap-2 px-1 py-6 text-xs text-[#78837e] sm:flex-row"><span>依据所附表格与权重公式制作</span><span>指标：体积能量密度 · 充电功率密度</span></footer>
+    </div></main>
+  );
+}
