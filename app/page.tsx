@@ -8,9 +8,9 @@ import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const products = [
-  { brand: '品胜', model: '1号', energy: 203.9, power: 255.9, dischargeStable: 21.6, chargeStable: 20.2 }, { brand: '绿联', model: '能量排 mini', energy: 235.7, power: 163.7, dischargeStable: 29.8, chargeStable: 27.1 },
-  { brand: '喜来松', model: '10号 mini', energy: 239.4, power: 232.8, dischargeStable: 30, chargeStable: 25 }, { brand: '舒杨', model: '281', energy: 324.2, power: 140.3, dischargeStable: 40, chargeStable: 35 },
-  { brand: '振华G', model: 'ZHP45B', energy: 360.6, power: 542.5, dischargeStable: 18.6, chargeStable: 18.7 }, { brand: '振华兄', model: 'ZHP2C', energy: 266.1, power: 615.9, dischargeStable: 79, chargeStable: 100 },
+  { brand: '品胜', model: '1号', energy: 203.9, power: 255.9, dischargeStable: 29.8, chargeStable: 27.1 }, { brand: '绿联', model: '能量排 mini', energy: 235.7, power: 163.7, dischargeStable: 30, chargeStable: 25 },
+  { brand: '喜来松', model: '10号 mini', energy: 239.4, power: 232.8, dischargeStable: 40, chargeStable: 35 }, { brand: '舒杨', model: '281', energy: 324.2, power: 140.3, dischargeStable: 18.6, chargeStable: 18.7 },
+  { brand: '振华兄', model: 'ZHP45B', energy: 360.6, power: 542.5, dischargeStable: 45, chargeStable: 65 }, { brand: '振华兄', model: 'ZHP2C', energy: 266.1, power: 615.9, dischargeStable: 79, chargeStable: 100 },
   { brand: '振华兄', model: 'ZHP2D', energy: 218.1, power: 757.1, dischargeStable: 110, chargeStable: 150 }, { brand: '凌霄科技', model: 'L7', energy: 231.7, power: 429.1, dischargeStable: 70, chargeStable: 80 },
   { brand: 'YZStudio', model: '锋12', energy: 313.0, power: 156.5, dischargeStable: 225, chargeStable: 18 }, { brand: 'YZStudio', model: '锋16', energy: 349.5, power: 525.9, dischargeStable: 55, chargeStable: 65 },
   { brand: '极创工坊', model: 'JC10mini', energy: 300.5, power: 313.0, dischargeStable: 45, chargeStable: 45 }, { brand: 'YZStudio', model: '锋14', energy: 271.6, power: 276.6, dischargeStable: 65, chargeStable: 55 },
