@@ -10,7 +10,7 @@
   </style>
 </head>
 <body><main class="wrap">
-  <header><div><div class="eyebrow">⚡ 移动电源决策实验室</div><h1>功率 × 能量密度权衡器</h1></div><div class="desc">改变你对快充与续航的重视程度，立即找到更符合使用场景的产品。</div></header>
+  <header><div><div class="eyebrow">⚡ 移动电源决策实验室</div><h1>功率 × 能量密度权衡器</h1></div><div class="desc"><strong style="display:block;color:#187c64;margin-bottom:5px">数据统计来源：振华兄群友 A--</strong>改变你对快充与续航的重视程度，立即找到更符合使用场景的产品。</div></header>
   <section class="top"><aside class="panel control"><div class="eyebrow" style="color:#9dd6c5">权重控制</div><h2>你更在意什么？</h2><div class="labelrow"><span>功率密度权重 w</span><span class="weight" id="weightText">50%</span></div><div class="rangebox"><button class="round" id="minus" aria-label="降低权重">−</button><input class="range" id="weight" type="range" min="0" max="100" value="50" aria-label="功率密度权重"><button class="round" id="plus" aria-label="提高权重">+</button></div><div class="ends"><span>偏重能量</span><span>平衡</span><span>偏重功率</span></div><div class="presets"><button class="preset" data-w="20">续航优先</button><button class="preset active" data-w="50">均衡推荐</button><button class="preset" data-w="80">快充优先</button></div><div class="formula">S = 1 / ( w / P<sub>d</sub> + (1−w) / E<sub>d</sub> )</div></aside>
   <section class="panel"><div class="eyebrow" id="intent">即时推荐 · 均衡导向</div><h2>当前前三名</h2><div class="cards" id="cards"></div></section></section>
   <section class="lower"><section class="panel"><div class="eyebrow">密度地图</div><h2>谁更接近右上角？</h2><div class="hint">将鼠标移到圆点上，或在手机上轻触圆点查看具体产品</div><div class="chartwrap" id="chart"><div class="tooltip" id="tooltip"></div><svg id="scatter" viewBox="0 0 640 390" role="img" aria-label="产品能量密度与功率密度散点图"></svg></div></section>
