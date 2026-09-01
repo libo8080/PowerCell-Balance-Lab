@@ -1,9 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 import { BatteryCharging, Calculator, Gauge, Info, Medal, RotateCcw, Zap } from 'lucide-react';
 import { CartesianGrid, Cell, Label, ReferenceLine, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from 'recharts';
-import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -35,7 +34,7 @@ export default function Home() {
 
       <section className="grid gap-5 lg:grid-cols-[380px_1fr]">
         <aside className="rounded-[24px] bg-[#173f35] p-6 text-white shadow-[0_18px_45px_rgba(20,56,47,.16)]"><div className="flex items-start justify-between"><div><p className="text-xs font-semibold tracking-[.14em] text-[#9dd6c5] uppercase">权重控制</p><h2 className="mt-2 text-xl font-semibold">你更在意什么？</h2></div><Gauge className="size-7 text-[#f7b64a]" /></div>
-          <div className="mt-8"><div className="mb-4 flex items-end justify-between"><span className="text-sm text-[#c7ddd6]">功率密度权重 w</span><strong className="text-4xl tabular-nums text-[#f7b64a]">{weight}%</strong></div><Slider aria-label="功率密度权重" value={[weight]} min={0} max={100} step={1} onValueChange={(v) => setWeight(v[0])} className="[&_[data-slot=slider-range]]:bg-[#f7b64a] [&_[data-slot=slider-thumb]]:size-5 [&_[data-slot=slider-thumb]]:border-[#f7b64a]" /><div className="mt-3 flex justify-between text-xs text-[#9dbab1]"><span>偏重能量</span><span>平衡</span><span>偏重功率</span></div></div>
+          <div className="mt-8"><div className="mb-4 flex items-end justify-between"><span className="text-sm text-[#c7ddd6]">功率密度权重 w</span><strong className="text-4xl tabular-nums text-[#f7b64a]">{weight}%</strong></div><div className="flex items-center gap-3"><button type="button" aria-label="降低功率密度权重" onClick={() => setWeight((v) => Math.max(0, v - 5))} className="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[.06] text-lg text-white hover:bg-white/15">−</button><input type="range" aria-label="功率密度权重" aria-valuetext={`${weight}%`} value={weight} min={0} max={100} step={1} onChange={(event) => setWeight(Number(event.currentTarget.value))} className="weight-range" style={{ '--weight': `${weight}%` } as CSSProperties} /><button type="button" aria-label="提高功率密度权重" onClick={() => setWeight((v) => Math.min(100, v + 5))} className="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[.06] text-lg text-white hover:bg-white/15">+</button></div><div className="mt-3 flex justify-between px-12 text-xs text-[#9dbab1]"><span>偏重能量</span><span>平衡</span><span>偏重功率</span></div></div>
           <div className="mt-7 grid grid-cols-3 gap-2">{presets.map((p) => <button key={p.value} onClick={() => setWeight(p.value)} className={`rounded-xl border px-2 py-2.5 text-xs transition ${weight === p.value ? 'border-[#f7b64a] bg-[#f7b64a] font-bold text-[#173f35]' : 'border-white/15 bg-white/[.05] text-[#c7ddd6] hover:bg-white/10'}`}>{p.label}</button>)}</div>
           <div className="mt-7 rounded-2xl border border-white/10 bg-white/[.06] p-4 font-mono text-[13px] leading-7 text-[#dbe9e4]">S = 1 / ( w / P<sub>d</sub> + (1−w) / E<sub>d</sub> )</div><p className="mt-3 text-xs leading-5 text-[#9dbab1]">P<sub>d</sub>：充电功率密度（W/L）<br />E<sub>d</sub>：体积能量密度（Wh/L）</p>
         </aside>
